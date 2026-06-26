@@ -8,6 +8,8 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.DELETE
+import retrofit2.http.Path
 
 data class User (
     val _id: String,
@@ -32,11 +34,14 @@ interface ApiService {
 
     @POST("auth/register")
     suspend fun registerUser(@Body user: NewUser): RegisterResponse
+
+    @DELETE("users/{id}")
+    suspend fun deleteUser(@Header("authorization") token: String, @Path("id") id: String): Map<String, String>
 }
 
 object RetrofitInstance {
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://192.168.1.108:3000/")
+        .baseUrl("http://192.168.1.113:3000/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

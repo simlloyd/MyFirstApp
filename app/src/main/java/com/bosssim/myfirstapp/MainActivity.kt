@@ -35,7 +35,8 @@ class MainActivity : ComponentActivity() {
 fun UserListScreen() {
     val users = remember { mutableStateListOf<User>() }
     val scope = rememberCoroutineScope()
-    val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmU3ZGI4NDQ0MWZjY2RmNDJhNDZhNCIsImlhdCI6MTc4MjIyMTAzMywiZXhwIjoxNzgyMzA3NDMzfQ.qtOk5FqDm4oaUvkKYtl29DhpsZgu_0H6a3dvp4BytgM"
+    val token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmU3ZGI4NDQ0MWZjY2RmNDJhNDZhNCIsImlhdCI6MTc4MjQ1MTExMSwiZXhwIjoxNzgyNTM3NTExfQ.ojIlPaSrF21wKFDKB74yR33l4gnZxGbxuWMZdZf10_g"
 
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -71,7 +72,7 @@ fun UserListScreen() {
 
         OutlinedTextField(
             value = email,
-            onValueChange = { email =it },
+            onValueChange = { email = it },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -124,9 +125,31 @@ fun UserListScreen() {
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = "Name: ${user.name}")
-                        Text(text = "City: ${user.city}")
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column {
+                            Text(text = "Name: ${user.name}")
+                            Text(text = "City: ${user.city}")
+                        }
+                        Button(
+                            onClick = {
+                                scope.launch {
+                                    try {
+                                        RetrofitInstance.api.deleteUser(token, user._id)
+                                        fetchUsers()
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                        ) {
+                            Text("Delete")
+                        }
                     }
                 }
             }
